@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Adventure Quest</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Главное меню -->
+<div id="menu">
+  <div class="menuCenter">
+    <h1>Adventure Quest</h1>
+    <button id="startBtn">Старт</button>
+    <button id="skinsBtn">Скины</button>
+    <button id="arenaBtn">Арены</button>
+  </div>
+  <div class="menuRight">
+    <button id="achievementsBtn" class="roundBtn" title="Достижения">🏆</button>
+    <button id="questsBtn" class="roundBtn" title="Квесты">📜</button>
+  </div>
+</div>
+
+<!-- Окно достижений -->
+<div id="achievementsMenu" class="hidden">
+  <h2>Достижения</h2>
+  <ul id="achievementsList"></ul>
+  <button id="backFromAchievements">Назад</button>
+</div>
+
+<!-- Окно квестов -->
+<div id="questsMenu" class="hidden">
+  <h2>Квесты</h2>
+  <ul id="questsList"></ul>
+  <button id="backFromQuests">Назад</button>
+</div>
+
+<!-- Меню скинов -->
+<div id="skinsMenu" class="hidden">
+  <h2>Скины</h2>
+  <div class="skinGrid">
+    <button class="skinBtn" data-skin="blue" title="Синий">
+      <img src="assets/player_blue.png" alt="Синий">
+      <span>Синий</span>
+    </button>
+    <button class="skinBtn" data-skin="red" title="Красный">
+      <img src="assets/player_red.png" alt="Красный">
+      <span>Красный</span>
+    </button>
+    <button class="skinBtn" data-skin="green" title="Зелёный">
+      <img src="assets/player_green.png" alt="Зелёный">
+      <span>Зелёный</span>
+    </button>
+  </div>
+  <button id="backFromSkins">Назад</button>
+</div>
+
+<!-- Меню арен -->
+<div id="arenaMenu" class="hidden">
+  <h2>Арены</h2>
+  <div class="arenaGrid">
+    <button class="arenaBtn" data-arena="forest" title="Лес">
+      <img src="assets/arena_forest.png" alt="Лес">
+      <span>Лес</span>
+    </button>
+    <button class="arenaBtn" data-arena="desert" title="Пустыня">
+      <img src="assets/arena_desert.png" alt="Пустыня">
+      <span>Пустыня</span>
+    </button>
+    <button class="arenaBtn" data-arena="ice" title="Лед">
+      <img src="assets/arena_ice.png" alt="Лед">
+      <span>Лед</span>
+    </button>
+  </div>
+  <button id="backFromArena">Назад</button>
+</div>
+
+<!-- Канвас для игры -->
+<canvas id="gameCanvas" class="hidden"></canvas>
+
+<!-- Мобильные кнопки управления -->
+<div id="mobileControls" class="hidden">
+  <div id="movePad">
+    <button id="moveUp">▲</button>
+    <div>
+      <button id="moveLeft">◀</button>
+      <button id="moveDown">▼</button>
+      <button id="moveRight">▶</button>
+    </div>
+  </div>
+  <div id="attackPad">
+    <button id="btnSword">Меч</button>
+    <button id="btnFists">Кулаки</button>
+    <button id="btnGun">Пистолет</button>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
