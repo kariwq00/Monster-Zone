@@ -31,8 +31,28 @@ const moveRightBtn = document.getElementById('moveRight');
 const btnSword = document.getElementById('btnSword');
 const btnFists = document.getElementById('btnFists');
 const btnGun = document.getElementById('btnGun');
+const rotatePrompt = document.getElementById('rotatePrompt');
 
-const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) || ('ontouchstart' in window);
+
+// Подгонка канваса под экран на мобильном (альбом) и подсказка «поверните телефон»
+function fitCanvasMobile() {
+    if (!isMobile) return;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isPortrait = h > w;
+    if (rotatePrompt) {
+        if (isPortrait && document.body.classList.contains('game-active')) {
+            rotatePrompt.classList.remove('hidden');
+        } else {
+            rotatePrompt.classList.add('hidden');
+        }
+    }
+    if (!document.body.classList.contains('game-active')) return;
+    const scale = Math.min(w / 800, h / 600);
+    canvas.style.width = (800 * scale) + 'px';
+    canvas.style.height = (600 * scale) + 'px';
+}
 
 let currentSkin = 'blue';
 let currentArena = 'forest';
@@ -75,6 +95,22 @@ canvas.addEventListener('mouseup', e => {
 });
 canvas.addEventListener('mousemove', updateMousePosition);
 canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+// На телефоне: касания по канвасу не прокручивают страницу и работают как мышь
+function handleCanvasTouch(e) {
+    if (!isMobile) return;
+    e.preventDefault();
+    const t = e.touches[0] || e.changedTouches[0];
+    if (!t) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    mouse.x = (t.clientX - rect.left) * scaleX;
+    mouse.y = (t.clientY - rect.top) * scaleY;
+}
+canvas.addEventListener('touchstart', handleCanvasTouch, { passive: false });
+canvas.addEventListener('touchmove', handleCanvasTouch, { passive: false });
+canvas.addEventListener('touchend', e => { if (e.touches.length === 0) { mouse.leftDown = false; mouse.rightDown = false; } }, { passive: false });
 
 // Загрузка изображений
 const images = {};
@@ -335,12 +371,16 @@ function gameLoop(){
     achievements.forEach((a,i)=> ctx.fillText(`${a.done?'✅':'⬜'} ${a.name}`, 552, 28 + i*22));
     quests.forEach((q,i)=> ctx.fillText(`${q.done?'✅':'⬜'} ${q.name}`, 552, 118 + i*22));
 
-    // Конец игры — просто сообщение на экране
-    if(player.hp>0){ requestAnimationFrame(gameLoop); }
+    // Конец игры — сообщение на экране, на мобильном снимаем класс и слушатели
+    if (player.hp > 0) { requestAnimationFrame(gameLoop); }
     else {
         ctx.fillStyle='red';
         ctx.font='36px Arial';
         ctx.fillText(`Игра окончена! Монеты: ${player.coins}, Врагов убито: ${killedEnemies}`, 50, 300);
+        document.body.classList.remove('game-active');
+        window.removeEventListener('resize', fitCanvasMobile);
+        window.removeEventListener('orientationchange', fitCanvasMobile);
+        if (rotatePrompt) rotatePrompt.classList.add('hidden');
     }
 }
 
@@ -348,9 +388,13 @@ function gameLoop(){
 startBtn.onclick=()=>{
     menu.style.display='none';
     canvas.classList.remove('hidden');
-    if(isMobile && mobileControls){
+    document.body.classList.add('game-active');
+    if (isMobile && mobileControls) {
         mobileControls.classList.remove('hidden');
     }
+    fitCanvasMobile();
+    window.addEventListener('resize', fitCanvasMobile);
+    window.addEventListener('orientationchange', fitCanvasMobile);
     gameLoop();
 };
 

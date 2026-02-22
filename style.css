@@ -154,19 +154,45 @@ button:hover {
 }
 
 canvas { 
-    display:block; 
-    margin:20px auto; 
-    background:#000; 
-    border:3px solid #333; 
+    display: block; 
+    margin: 20px auto; 
+    background: #000; 
+    border: 3px solid #333;
+    touch-action: none;
 }
 
-/* Мобильное управление */
+/* Подсказка: поверните телефон (только портрет + мобильный) */
+.rotate-prompt {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.9);
+    color: #fff;
+    font-size: 24px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+.rotate-prompt p { margin: 8px 0; }
+.rotate-prompt.hidden { display: none !important; }
+.rotate-prompt:not(.hidden) { display: flex; }
+
+@media (max-width: 899px) and (orientation: portrait) {
+    body.game-active .rotate-prompt:not(.hidden) { display: flex; }
+}
+
+/* Мобильное управление: слева ходьба, справа оружие */
 #mobileControls {
     position: fixed;
     left: 0;
     right: 0;
+    top: 0;
     bottom: 0;
     pointer-events: none;
+    z-index: 20;
 }
 
 #movePad,
@@ -174,36 +200,67 @@ canvas {
     pointer-events: auto;
 }
 
+/* Слева — джойстик ходьбы */
 #movePad {
     position: absolute;
-    left: 20px;
-    bottom: 20px;
+    left: 16px;
+    bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #movePad button {
-    width: 50px;
-    height: 50px;
-    margin: 3px;
-    font-size: 24px;
+    width: 56px;
+    height: 56px;
+    margin: 4px;
+    font-size: 22px;
+    min-width: 56px;
+    min-height: 56px;
+    padding: 0;
 }
 
+/* Справа — оружие (меч, кулаки, пистолет) */
 #attackPad {
     position: absolute;
-    right: 20px;
-    bottom: 20px;
+    right: 16px;
+    bottom: 16px;
+    top: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    align-items: flex-end;
 }
 
 #attackPad button {
-    width: 110px;
-    height: 45px;
+    width: 120px;
+    height: 52px;
+    min-height: 52px;
     font-size: 18px;
+    padding: 8px 16px;
 }
 
+/* На ПК мобильные кнопки скрыты */
 @media (min-width: 900px) {
     #mobileControls {
         display: none !important;
+    }
+    #rotatePrompt { display: none !important; }
+}
+
+/* На мобильном: канвас подстраивается под экран (размер задаёт JS) */
+@media (max-width: 899px) {
+    body.game-active {
+        overflow: hidden;
+        touch-action: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+    body.game-active canvas {
+        max-width: 100%;
+        max-height: 100vh;
+        margin: 0 auto;
+        display: block;
     }
 }
